@@ -28,7 +28,7 @@ public class PostService {
                 .content(requestDto.getContent().replace("\r\n","<br>"))
                 .price(requestDto.getPrice())
                 .location(requestDto.getLocation())
-                .imageUrl(requestDto.getImageUrl())
+                .imageUrl(requestDto.getImageUrls())
                 .build();
         postRepository.save(post);
         return new ResponseEntity("등록 성공", HttpStatus.OK);
@@ -40,16 +40,7 @@ public class PostService {
         List<Post> posts = postRepository.findAllByLocation(location);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : posts) {
-            PostResponseDto postResponseDto = new PostResponseDto(
-                    post.getPostingId(),
-                    post.getNickname(),
-                    post.getTitle(),
-                    post.getContent(),
-                    post.getPrice(),
-                    post.getLocation(),
-                    post.getImageUrl(),
-                    post.getCreatedAt()
-            );
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
         }
         return postResponseDtos;
@@ -60,16 +51,7 @@ public class PostService {
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : posts) {
-            PostResponseDto postResponseDto = new PostResponseDto(
-                    post.getPostingId(),
-                    post.getNickname(),
-                    post.getTitle(),
-                    post.getContent(),
-                    post.getPrice(),
-                    post.getLocation(),
-                    post.getImageUrl(),
-                    post.getCreatedAt()
-            );
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
         }
         return postResponseDtos;
@@ -80,19 +62,14 @@ public class PostService {
         List<Post> posts = postRepository.findByTitleContaining(keyword);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : posts) {
-            PostResponseDto postResponseDto = new PostResponseDto(
-                    post.getPostingId(),
-                    post.getNickname(),
-                    post.getTitle(),
-                    post.getContent(),
-                    post.getPrice(),
-                    post.getLocation(),
-                    post.getImageUrl(),
-                    post.getCreatedAt()
-            );
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
         }
         return postResponseDtos;
+    }
+
+    //내가 쓴 게시물 조회
+    public Object getMyPosts(UserDetailsImpl userDetails) {
     }
 
     //해당 게시물 상세페이지 (게시물 1개 조회)
@@ -100,16 +77,7 @@ public class PostService {
         Post post = postRepository.findByPostingId(postingId).orElseThrow(
                 () -> new IllegalArgumentException()
         );
-        return new PostResponseDto(
-                post.getPostingId(),
-                post.getNickname(),
-                post.getTitle(),
-                post.getContent(),
-                post.getPrice(),
-                post.getLocation(),
-                post.getImageUrl(),
-                post.getCreatedAt()
-        );
+        return PostResponseDto.fromPost(post);
     }
 
     //게시물 수정
@@ -126,7 +94,7 @@ public class PostService {
         }
     }
 
-
+    //게시물 삭제
     public ResponseEntity delete(Long postingId, String nickname) {
         Post post = postRepository.findByPostingId(postingId).orElseThrow(
                 () -> new IllegalArgumentException()
@@ -138,6 +106,5 @@ public class PostService {
             return new ResponseEntity("삭제 불가능한 게시글입니다.", HttpStatus.valueOf(403));
         }
     }
-
 
 }

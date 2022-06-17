@@ -2,13 +2,13 @@ package com.carrot.carrot_back.model;
 
 import com.carrot.carrot_back.dto.requestDto.PostRequestDto;
 import com.carrot.carrot_back.security.UserDetailsImpl;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.mapping.List;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -33,17 +33,17 @@ public class Post extends Timestamped{
     @Column
     private String location;
 
-    @Column
-    private String imageUrl;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ImageUrl> imageUrls;
+
 
     @Builder
-    public Post(String nickname, String title, String content, int price, String location, String imageUrl) {
+    public Post(String nickname, String title, String content, int price, String location) {
         this.nickname = nickname;
         this.title = title;
         this.content = content;
         this.price = price;
         this.location = location;
-        this.imageUrl = imageUrl;
     }
 
     public void update(PostRequestDto requestDto, Long postingId, UserDetailsImpl userDetails) {

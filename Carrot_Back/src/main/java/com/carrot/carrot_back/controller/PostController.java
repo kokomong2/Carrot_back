@@ -46,7 +46,7 @@ public class PostController {
     //내가 작성한 게시글 조회
     @GetMapping("/api/posts/myposts")
     public ResponseEntity<List<PostResponseDto>> myPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-
+        return ResponseEntity.ok().body(postService.getMyPosts(userDetails));
     }
 
     //해당 게시물 상세 페이지

@@ -1,5 +1,6 @@
 package com.carrot.carrot_back.dto.requestDto;
 
+import com.carrot.carrot_back.model.ImageUrl;
 import lombok.Getter;
 
 import java.util.List;
@@ -10,6 +11,5 @@ public class PostRequestDto {
     private String content;
     private String price;
     private String location;
-    private String imageUrl;
-
+    private List<String> imageUrls;
 }

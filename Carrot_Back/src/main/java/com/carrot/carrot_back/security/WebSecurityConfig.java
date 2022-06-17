@@ -151,6 +151,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         skipPathList.add("GET,/favicon.ico");
 
+        skipPathList.add("GET,/api/posts");
+
+        // 게시글 조회 허용
+        skipPathList.add("GET,/api/post/**");
+        skipPathList.add("GET,/api/posts/**");
+
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
                 "/**"

@@ -44,26 +44,32 @@ public class PostController {
     }
 
     //내가 작성한 게시글 조회
-    @GetMapping("/api/posts/myposts")
+    @GetMapping("/api/posts/my")
     public ResponseEntity<List<PostResponseDto>> myPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.getMyPosts(userDetails));
+        return ResponseEntity.ok().body(postService.getMyPosts(userDetails.getUsername()));
+    }
+
+    //닉네임으로 게시글 조회
+    @GetMapping("/api/posts/{nickname}")
+    public ResponseEntity getPost(@PathVariable String nickname) {
+        return ResponseEntity.ok().body(postService.getPostsViaNickname(nickname));
     }
 
     //해당 게시물 상세 페이지
-    @GetMapping("/api/post/{postingId}")
-    public ResponseEntity getPost(@PathVariable Long postingId) {
-        return ResponseEntity.ok().body(postService.getPost(postingId));
+    @GetMapping("/api/post/{id}")
+    public ResponseEntity getPost(@PathVariable Long id) {
+        return ResponseEntity.ok().body(postService.getPost(id));
     }
 
     //게시글 수정
-    @PutMapping("/api/post/{postingId}")
-    public ResponseEntity undatePost(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
-        return ResponseEntity.ok().body(postService.update(postingId, userDetails.getUser().getNickname(), requestDto));
+    @PutMapping("/api/post/{id}")
+    public ResponseEntity undatePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
+        return ResponseEntity.ok().body(postService.update(id, userDetails.getUser().getNickname(), requestDto));
     }
 
     //게시글 삭제
-    @DeleteMapping("/api/post/{postingId}")
-    public ResponseEntity deletePost(@PathVariable Long postingId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.delete(postingId, userDetails.getUser().getNickname()));
+    @DeleteMapping("/api/post/{id}")
+    public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getNickname()));
     }
 }

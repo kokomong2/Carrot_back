@@ -14,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
-    private Long postingId;
+    private Long id;
+    private String username;
     private String nickname;
     private String title;
     private String content;
@@ -25,7 +26,8 @@ public class PostResponseDto {
 
     public static PostResponseDto fromPost(Post post) {
         return new PostResponseDto(
-                post.getPostingId(),
+                post.getId(),
+                post.getUsername(),
                 post.getNickname(),
                 post.getTitle(),
                 post.getContent(),

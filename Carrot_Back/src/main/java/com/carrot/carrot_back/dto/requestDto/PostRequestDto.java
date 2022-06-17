@@ -9,7 +9,7 @@ import java.util.List;
 public class PostRequestDto {
     private String title;
     private String content;
-    private String price;
+    private int price;
     private String location;
     private List<String> imageUrls;
 }

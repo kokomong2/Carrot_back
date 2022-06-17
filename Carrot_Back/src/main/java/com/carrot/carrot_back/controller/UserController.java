@@ -24,6 +24,5 @@ UserController {
         } catch (Exception e) { // 에러나면 false
             return new ResponseEntity("회원가입 실패", HttpStatus.BAD_REQUEST);
         }
-
     }
 }

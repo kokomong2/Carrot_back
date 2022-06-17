@@ -2,6 +2,9 @@ package com.carrot.carrot_back.model;
 
 import com.carrot.carrot_back.dto.requestDto.PostRequestDto;
 import com.carrot.carrot_back.security.UserDetailsImpl;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Post extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long postingId;
+    private Long id;
+
+    @Column
+    private String username;
 
     @Column
     private String nickname;
@@ -33,25 +40,38 @@ public class Post extends Timestamped{
     @Column
     private String location;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ImageUrl> imageUrls;
 
 
     @Builder
-    public Post(String nickname, String title, String content, int price, String location) {
+    public Post(String username, String nickname, String title, String content, int price, String location, List<ImageUrl> imageUrls) {
+        this.username = username;
         this.nickname = nickname;
         this.title = title;
         this.content = content;
         this.price = price;
         this.location = location;
+        this.imageUrls = imageUrls;
     }
 
-    public void update(PostRequestDto requestDto, Long postingId, UserDetailsImpl userDetails) {
+    public Post(PostRequestDto requestDto, UserDetailsImpl userDetails) {
+        this.username = userDetails.getUsername();
+        this.nickname = userDetails.getUser().getNickname();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.price = Integer.parseInt(requestDto.getPrice());
+        this.price = requestDto.getPrice();
         this.location = requestDto.getLocation();
-        this.postingId = postingId;
-        this.nickname = userDetails.getUser().getNickname();
+        this.imageUrls = getImageUrls();
     }
+
+    public void update(PostRequestDto requestDto, Long id) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.price = requestDto.getPrice();
+        this.location = requestDto.getLocation();
+        this.id = id;
+    }
+
 }

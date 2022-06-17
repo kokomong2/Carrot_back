@@ -60,8 +60,8 @@ public class UserDetailsImpl implements UserDetails {
 //
 //        return authorities;
 //    }
-@Override // 인가를 해주는 부분
-public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.emptyList();
-}
+    @Override // 인가를 해주는 부분
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
+    }
 }

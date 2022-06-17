@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
@@ -22,17 +24,17 @@ public class UserService {
         // 회원 ID 중복 확인
         String username = requestDto.getUsername();
         String nickname = requestDto.getNickname();
-//        Optional<User> found = userRepository.findByUsername(username);
-////        if (found.isPresent()) {
-////            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-////        }
+        Optional<User> found = userRepository.findByUsername(username);
+        if (found.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
+        }
 
         // 패스워드 암호화
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String profileImage = requestDto.getProfileImage();
+        String location =requestDto.getLocation();
 
-
-
-        User user = new User(username,nickname, password);
+        User user = new User(username,nickname, password,profileImage,location);
         userRepository.save(user);
     }
 

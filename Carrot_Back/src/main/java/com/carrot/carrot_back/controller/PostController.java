@@ -3,6 +3,7 @@ package com.carrot.carrot_back.controller;
 import com.carrot.carrot_back.dto.requestDto.PostRequestDto;
 import com.carrot.carrot_back.dto.responseDto.PostResponseDto;
 import com.carrot.carrot_back.model.Post;
+import com.carrot.carrot_back.model.User;
 import com.carrot.carrot_back.security.UserDetailsImpl;
 import com.carrot.carrot_back.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +34,38 @@ public class PostController {
         }
     }
 
-    //검색어로 찾기 (merge 후 확인 필요)
+    //검색어(title)로 찾기
     @GetMapping("/api/posts/search")
-    public ResponseEntity<List<PostResponseDto>> searchPosts(@RequestParam(required = false) String keyword) {
+    public ResponseEntity<List<PostResponseDto>> searchPostsByTitle(@RequestParam(required = false) String keyword) {
         if (keyword != null) {
-            return ResponseEntity.ok().body(postService.getSearchedPosts(keyword));
+            return ResponseEntity.ok().body(postService.getSearchedPostsByTitle(keyword));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().body(postService.getAllPosts());
+        }
+    }
+
+    //검색어(location)로 찾기
+    @GetMapping("/api/posts/search")
+    public ResponseEntity<List<PostResponseDto>> searchPostsByLocation(@RequestParam(required = false) String keyword) {
+        if (keyword != null) {
+            return ResponseEntity.ok().body(postService.getSearchedPostsByLocation(keyword));
+        } else {
+            return ResponseEntity.ok().body(postService.getAllPosts());
+        }
+    }
+
+    //검색어(content)로 찾기
+    @GetMapping("/api/posts/search")
+    public ResponseEntity<List<PostResponseDto>> searchPostsByContent(@RequestParam(required = false) String keyword) {
+        if (keyword != null) {
+            return ResponseEntity.ok().body(postService.getSearchedPostsByContent(keyword));
+        } else {
+            return ResponseEntity.ok().body(postService.getAllPosts());
         }
     }
 
     //내가 작성한 게시글 조회
-    @GetMapping("/api/posts/my")
+    @PostMapping("/api/posts/my-posts")
     public ResponseEntity<List<PostResponseDto>> myPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(postService.getMyPosts(userDetails.getUsername()));
     }

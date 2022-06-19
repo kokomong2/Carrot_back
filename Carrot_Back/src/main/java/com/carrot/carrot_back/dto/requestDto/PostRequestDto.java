@@ -10,6 +10,5 @@ public class PostRequestDto {
     private String title;
     private String content;
     private int price;
-    private String location;
     private List<String> imageUrls;
 }

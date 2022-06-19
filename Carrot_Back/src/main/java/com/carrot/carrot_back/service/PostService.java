@@ -8,6 +8,7 @@ import com.carrot.carrot_back.repository.ImageUrlRepository;
 import com.carrot.carrot_back.repository.PostRepository;
 import com.carrot.carrot_back.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.internal.Function;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -107,15 +112,48 @@ public class PostService {
         }
     }
 
+    //중복 검색 방지용 https://howtodoinjava.com/java8/java-stream-distinct-examples/
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    //키워드로 검색 (title, location, content)
+    public List<PostResponseDto> searchPostsByKeyword(String keyword) {
+        List<Post> postsByTitle = postRepository.findByTitleContaining(keyword);
+        List<Post> postsByLocation = postRepository.findByLocationContaining(keyword);
+        List<Post> postsByContent = postRepository.findByContentContaining(keyword);
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        postResponseDtos.addAll(makeList(postsByTitle));
+        postResponseDtos.addAll(makeList(postsByLocation));
+        postResponseDtos.addAll(makeList(postsByContent));
+//        if (postResponseDtos.isEmpty()) {
+//            return getAllPosts();
+//        }
+        return postResponseDtos.stream()
+                .filter(distinctByKey(p -> p.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PostResponseDto> makeList(List<Post> postList) {
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        for (Post post : postList) {
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
+            postResponseDtos.add(postResponseDto);
+        }
+        return postResponseDtos;
+    }
 
 
     //내가 쓴 게시물 조회
     public List<PostResponseDto> getMyPosts(String username) {
         List<Post> posts = postRepository.findAllByUsername(username);
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
+        if (posts != null) {
+            List<PostResponseDto> postResponseDtos = new ArrayList<>();
+            for (Post post : posts) {
+                PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
+                postResponseDtos.add(postResponseDto);
+            }
             return postResponseDtos;
         }
         throw new IllegalArgumentException("작성한 게시글이 없습니다.");
@@ -140,11 +178,11 @@ public class PostService {
     }
 
     //게시물 수정
-    public ResponseEntity update(Long id, String nickname, PostRequestDto requestDto) {
+    public ResponseEntity update(Long id, String username, PostRequestDto requestDto) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException()
         );
-        if (post.getNickname().equals(nickname)) {
+        if (post.getUsername().equals(username)) {
             post.update(requestDto, id);
             postRepository.save(post);
             return new ResponseEntity("수정 완료", HttpStatus.OK);
@@ -154,11 +192,11 @@ public class PostService {
     }
 
     //게시물 삭제
-    public ResponseEntity delete(Long id, String nickname) {
+    public ResponseEntity delete(Long id, String username) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException()
         );
-        if (post.getNickname().equals(nickname)) {
+        if (post.getUsername().equals(username)) {
             postRepository.delete(post);
             return new ResponseEntity("삭제 완료", HttpStatus.OK);
         } else {

@@ -44,7 +44,7 @@ public class PostResponseDto {
         long calculate = MILLIS/1000;
 
         if (calculate < SEC){
-            msg = calculate + "초전";
+            msg = calculate + "초 전";
         } else if ((calculate /= SEC) < MIN) {
             msg = calculate + "분 전";
         } else if ((calculate /= MIN) < HOUR) {

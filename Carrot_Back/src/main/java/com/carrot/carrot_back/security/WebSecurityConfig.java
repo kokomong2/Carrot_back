@@ -158,7 +158,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 게시글 조회 허용
         skipPathList.add("GET,/api/post/**");
         skipPathList.add("GET,/api/posts/**");
-        skipPathList.add("GET,/api/posts/search");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

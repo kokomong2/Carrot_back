@@ -24,48 +24,34 @@ public class PostController {
         return ResponseEntity.ok().body(postService.createPost(requestDto, userDetails));
     }
 
-    // location으로 찾기 및 전체 조회
+//    // location으로 찾기 및 전체 조회
+//    @GetMapping("/api/posts")
+//    public ResponseEntity<List<PostResponseDto>> readPosts(@RequestParam(required = false) String location) {
+//        if (location != null) {
+//            return ResponseEntity.ok().body(postService.getPostsByLocation(location));
+//        } else {
+//            return ResponseEntity.ok().body(postService.getAllPosts());
+//        }
+//    }
+
+    //전체 게시글 조회
     @GetMapping("/api/posts")
-    public ResponseEntity<List<PostResponseDto>> readPosts(@RequestParam(required = false) String location) {
-        if (location != null) {
-            return ResponseEntity.ok().body(postService.getPostsByLocation(location));
-        } else {
-            return ResponseEntity.ok().body(postService.getAllPosts());
-        }
+    public ResponseEntity<List<PostResponseDto>> readPosts() {
+        return ResponseEntity.ok().body(postService.getAllPosts());
     }
 
-    //검색어(title)로 찾기
+    //검색어(title, location, content)로 찾기
     @GetMapping("/api/posts/search")
-    public ResponseEntity<List<PostResponseDto>> searchPostsByTitle(@RequestParam(required = false) String keyword) {
+    public ResponseEntity<List<PostResponseDto>> searchPosts(@RequestParam(required = false) String keyword) {
         if (keyword != null) {
-            return ResponseEntity.ok().body(postService.getSearchedPostsByTitle(keyword));
-        } else {
-            return ResponseEntity.ok().body(postService.getAllPosts());
-        }
-    }
-
-    //검색어(location)로 찾기
-    @GetMapping("/api/posts/search")
-    public ResponseEntity<List<PostResponseDto>> searchPostsByLocation(@RequestParam(required = false) String keyword) {
-        if (keyword != null) {
-            return ResponseEntity.ok().body(postService.getSearchedPostsByLocation(keyword));
-        } else {
-            return ResponseEntity.ok().body(postService.getAllPosts());
-        }
-    }
-
-    //검색어(content)로 찾기
-    @GetMapping("/api/posts/search")
-    public ResponseEntity<List<PostResponseDto>> searchPostsByContent(@RequestParam(required = false) String keyword) {
-        if (keyword != null) {
-            return ResponseEntity.ok().body(postService.getSearchedPostsByContent(keyword));
+            return ResponseEntity.ok().body(postService.searchPostsByKeyword(keyword));
         } else {
             return ResponseEntity.ok().body(postService.getAllPosts());
         }
     }
 
     //내가 작성한 게시글 조회
-    @PostMapping("/api/posts/my-posts")
+    @GetMapping("/api/my-posts")
     public ResponseEntity<List<PostResponseDto>> myPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(postService.getMyPosts(userDetails.getUsername()));
     }
@@ -77,20 +63,20 @@ public class PostController {
     }
 
     //해당 게시물 상세 페이지
-    @GetMapping("/api/post/{id}")
+    @GetMapping("/api/posts/{id}")
     public ResponseEntity getPost(@PathVariable Long id) {
         return ResponseEntity.ok().body(postService.getPost(id));
     }
 
     //게시글 수정
-    @PutMapping("/api/post/{id}")
+    @PutMapping("/api/posts/{id}")
     public ResponseEntity undatePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
-        return ResponseEntity.ok().body(postService.update(id, userDetails.getUser().getNickname(), requestDto));
+        return ResponseEntity.ok().body(postService.update(id, userDetails.getUser().getUsername(), requestDto));
     }
 
     //게시글 삭제
-    @DeleteMapping("/api/post/{id}")
+    @DeleteMapping("/api/posts/{id}")
     public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getNickname()));
+        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername()));
     }
 }

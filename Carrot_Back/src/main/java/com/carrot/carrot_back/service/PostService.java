@@ -32,10 +32,8 @@ public class PostService {
                 .location(requestDto.getLocation())
                 .build();
         postRepository.save(post);
-        System.out.println("이미지 전까지는 통과");
 
         saveImageUrls(requestDto.getImageUrls(), post);
-        System.out.println("이미지까지 저장");
 
         return new ResponseEntity("등록 성공", HttpStatus.OK);
     }

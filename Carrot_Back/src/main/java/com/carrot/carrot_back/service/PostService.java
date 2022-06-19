@@ -45,71 +45,18 @@ public class PostService {
     }
 
 
-    //지역별로 게시물 조회
-    public List<PostResponseDto> getPostsByLocation(String location) {
-        List<Post> posts = postRepository.findAllByLocation(location);
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        return postResponseDtos;
-    }
+//    //지역별로 게시물 조회
+//    public List<PostResponseDto> getPostsByLocation(String location) {
+//        List<Post> posts = postRepository.findAllByLocation(location);
+//        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+//        makeList(posts);
+//        return postResponseDtos;
+//    }
 
     //모든 게시물 조회
     public List<PostResponseDto> getAllPosts() {
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        return postResponseDtos;
-    }
-
-    //검색어로 게시물 조회(title에 해당하는 keyword로 검색)
-    public List<PostResponseDto> getSearchedPostsByTitle(String keyword) {
-        List<Post> posts = postRepository.findByTitleContaining(keyword);
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        if (postRepository.findByTitleContaining(keyword).isEmpty()) {
-            return getAllPosts();
-        } else {
-            return postResponseDtos;
-        }
-    }
-
-    //검색어로 게시물 조회(location에 해당하는 keyword로 검색)
-    public List<PostResponseDto> getSearchedPostsByLocation(String keyword) {
-        List<Post> posts = postRepository.findByLocationContaining(keyword);
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        if (postRepository.findByLocationContaining(keyword).isEmpty()) {
-            return getAllPosts();
-        } else {
-            return postResponseDtos;
-        }
-    }
-
-    //검색어로 게시물 조회(content에 해당하는 keyword로 검색)
-    public List<PostResponseDto> getSearchedPostsByContent(String keyword) {
-        List<Post> posts = postRepository.findByContentContaining(keyword);
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        if (postRepository.findByContentContaining(keyword).isEmpty()) {
-            return getAllPosts();
-        } else {
-            return postResponseDtos;
-        }
+        return makeList(posts);
     }
 
     //중복 검색 방지용 https://howtodoinjava.com/java8/java-stream-distinct-examples/
@@ -131,38 +78,29 @@ public class PostService {
 //            return getAllPosts();
 //        }
         return postResponseDtos.stream()
-                .filter(distinctByKey(p -> p.getId()))
+                .filter(distinctByKey(p -> p.getId())) //중복되는 게시글 id값으로 비교해서 걸러주기.
                 .collect(Collectors.toList());
     }
 
-    public List<PostResponseDto> makeList(List<Post> postList) {
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : postList) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-            postResponseDtos.add(postResponseDto);
-        }
-        return postResponseDtos;
-    }
-
-
     //내가 쓴 게시물 조회
     public List<PostResponseDto> getMyPosts(String username) {
-        List<Post> posts = postRepository.findAllByUsername(username);
+        List<Post> posts = postRepository.findByUsername(username);
         if (posts != null) {
-            List<PostResponseDto> postResponseDtos = new ArrayList<>();
-            for (Post post : posts) {
-                PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
-                postResponseDtos.add(postResponseDto);
-            }
-            return postResponseDtos;
+            return makeList(posts);
         }
         throw new IllegalArgumentException("작성한 게시글이 없습니다.");
     }
 
-    public List<PostResponseDto> getPostsViaNickname(String nickname) {
-        List<Post> posts = postRepository.findAllByNickname(nickname);
+    //닉네임으로 게시글 검색
+    public List<PostResponseDto> getPostsByNickname(String nickname) {
+        List<Post> posts = postRepository.findByNickname(nickname);
+        return makeList(posts);
+    }
+
+    //for문 돌리는 함수
+    public List<PostResponseDto> makeList(List<Post> postList) {
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post post : posts) {
+        for (Post post : postList) {
             PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
         }
@@ -204,6 +142,7 @@ public class PostService {
         }
     }
 
+    //imageUrl들을 imageUrls리스트로 만들어주기
     private List<ImageUrl> saveImageUrls(List<String> imageUrls, Post post) {
         List<ImageUrl> imageUrlList = new ArrayList<>();
 

@@ -24,7 +24,7 @@ public class PostController {
         return ResponseEntity.ok().body(postService.createPost(requestDto, userDetails));
     }
 
-//    // location으로 찾기 및 전체 조회
+//    // location으로 찾기
 //    @GetMapping("/api/posts")
 //    public ResponseEntity<List<PostResponseDto>> readPosts(@RequestParam(required = false) String location) {
 //        if (location != null) {
@@ -45,9 +45,8 @@ public class PostController {
     public ResponseEntity<List<PostResponseDto>> searchPosts(@RequestParam(required = false) String keyword) {
         if (keyword != null) {
             return ResponseEntity.ok().body(postService.searchPostsByKeyword(keyword));
-        } else {
-            return ResponseEntity.ok().body(postService.getAllPosts());
         }
+        return ResponseEntity.ok().body(postService.getAllPosts());
     }
 
     //내가 작성한 게시글 조회
@@ -59,23 +58,23 @@ public class PostController {
     //닉네임으로 게시글 조회
     @GetMapping("/api/posts/{nickname}")
     public ResponseEntity getPost(@PathVariable String nickname) {
-        return ResponseEntity.ok().body(postService.getPostsViaNickname(nickname));
+        return ResponseEntity.ok().body(postService.getPostsByNickname(nickname));
     }
 
     //해당 게시물 상세 페이지
-    @GetMapping("/api/posts/{id}")
+    @GetMapping("/api/post/{id}")
     public ResponseEntity getPost(@PathVariable Long id) {
         return ResponseEntity.ok().body(postService.getPost(id));
     }
 
     //게시글 수정
-    @PutMapping("/api/posts/{id}")
+    @PutMapping("/api/post/{id}")
     public ResponseEntity undatePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
         return ResponseEntity.ok().body(postService.update(id, userDetails.getUser().getUsername(), requestDto));
     }
 
     //게시글 삭제
-    @DeleteMapping("/api/posts/{id}")
+    @DeleteMapping("/api/post/{id}")
     public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername()));
     }

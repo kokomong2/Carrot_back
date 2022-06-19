@@ -13,7 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByLocationContaining(String keyword);
     List<Post> findByContentContaining(String keyword);
     Optional<Post> findById(Long id); //왜 이건 항상 optional인가?
-    List<Post> findAllByUsername(String username);
-    List<Post> findAllByNickname(String nickname);
-
+    List<Post> findByUsername(String username);
+    List<Post> findByNickname(String nickname);
 }

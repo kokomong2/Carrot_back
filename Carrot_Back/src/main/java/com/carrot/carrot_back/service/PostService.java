@@ -41,7 +41,7 @@ public class PostService {
 
         saveImageUrls(requestDto.getImageUrls(), post);
 
-        return new ResponseEntity("등록 성공", HttpStatus.OK);
+        return new ResponseEntity(post, HttpStatus.OK);
     }
 
 
@@ -123,7 +123,7 @@ public class PostService {
         if (post.getUsername().equals(username)) {
             post.update(requestDto, id);
             postRepository.save(post);
-            return new ResponseEntity("수정 완료", HttpStatus.OK);
+            return new ResponseEntity(post, HttpStatus.OK);
         } else {
             return new ResponseEntity(HttpStatus.valueOf(403));
         }

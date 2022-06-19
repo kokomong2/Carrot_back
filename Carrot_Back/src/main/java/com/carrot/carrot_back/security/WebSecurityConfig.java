@@ -6,6 +6,7 @@ import com.carrot.carrot_back.security.filter.JwtAuthFilter;
 import com.carrot.carrot_back.security.jwt.HeaderTokenExtractor;
 import com.carrot.carrot_back.security.provider.FormLoginAuthProvider;
 import com.carrot.carrot_back.security.provider.JWTAuthProvider;
+import com.carrot.carrot_back.service.PostService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,7 @@ import java.util.List;
 @EnableGlobalMethodSecurity(securedEnabled = true) // @Secured 어노테이션 활성화
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private PostService postService;
     private final JWTAuthProvider jwtAuthProvider;
     private final HeaderTokenExtractor headerTokenExtractor;
 
@@ -156,6 +158,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 게시글 조회 허용
         skipPathList.add("GET,/api/post/**");
         skipPathList.add("GET,/api/posts/**");
+
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class PostService {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent().replace("\r\n", "<br>"))
                 .price(requestDto.getPrice())
-                .location(requestDto.getLocation())
+                .location(userDetails.getUser().getLocation())
                 .build();
         postRepository.save(post);
 
@@ -62,25 +63,62 @@ public class PostService {
     }
 
     //검색어로 게시물 조회(title에 해당하는 keyword로 검색)
-    public List<PostResponseDto> getSearchedPosts(String keyword) {
+    public List<PostResponseDto> getSearchedPostsByTitle(String keyword) {
         List<Post> posts = postRepository.findByTitleContaining(keyword);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         for (Post post : posts) {
             PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
         }
-        return postResponseDtos;
+        if (postRepository.findByTitleContaining(keyword).isEmpty()) {
+            return getAllPosts();
+        } else {
+            return postResponseDtos;
+        }
     }
+
+    //검색어로 게시물 조회(location에 해당하는 keyword로 검색)
+    public List<PostResponseDto> getSearchedPostsByLocation(String keyword) {
+        List<Post> posts = postRepository.findByLocationContaining(keyword);
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
+            postResponseDtos.add(postResponseDto);
+        }
+        if (postRepository.findByLocationContaining(keyword).isEmpty()) {
+            return getAllPosts();
+        } else {
+            return postResponseDtos;
+        }
+    }
+
+    //검색어로 게시물 조회(content에 해당하는 keyword로 검색)
+    public List<PostResponseDto> getSearchedPostsByContent(String keyword) {
+        List<Post> posts = postRepository.findByContentContaining(keyword);
+        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
+            postResponseDtos.add(postResponseDto);
+        }
+        if (postRepository.findByContentContaining(keyword).isEmpty()) {
+            return getAllPosts();
+        } else {
+            return postResponseDtos;
+        }
+    }
+
+
 
     //내가 쓴 게시물 조회
     public List<PostResponseDto> getMyPosts(String username) {
         List<Post> posts = postRepository.findAllByUsername(username);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
-        for (Post myPost : posts) {
-            PostResponseDto postResponseDto = PostResponseDto.fromPost(myPost);
+        for (Post post : posts) {
+            PostResponseDto postResponseDto = PostResponseDto.fromPost(post);
             postResponseDtos.add(postResponseDto);
-        }
             return postResponseDtos;
+        }
+        throw new IllegalArgumentException("작성한 게시글이 없습니다.");
     }
 
     public List<PostResponseDto> getPostsViaNickname(String nickname) {

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -62,7 +63,7 @@ public class Post extends Timestamped{
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.price = requestDto.getPrice();
-        this.location = requestDto.getLocation();
+        this.location = userDetails.getUser().getLocation();
         this.imageUrls = getImageUrls();
     }
 
@@ -70,7 +71,6 @@ public class Post extends Timestamped{
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.price = requestDto.getPrice();
-        this.location = requestDto.getLocation();
         this.id = id;
     }
 

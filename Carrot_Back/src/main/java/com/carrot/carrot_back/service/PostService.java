@@ -32,6 +32,7 @@ public class PostService {
     public ResponseEntity createPost(PostRequestDto requestDto, UserDetailsImpl userDetails) {
         Post post = Post.builder()
                 .username(userDetails.getUsername())
+                .profileImage(userDetails.getUser().getProfileImage())
                 .nickname(userDetails.getUser().getNickname())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent().replace("\r\n", "<br>"))

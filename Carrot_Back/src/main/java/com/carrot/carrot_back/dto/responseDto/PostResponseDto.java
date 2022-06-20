@@ -20,6 +20,7 @@ import java.util.List;
 public class PostResponseDto {
     private Long id;
     private String username;
+    private String profileImage;
     private String nickname;
     private String title;
     private String content;
@@ -68,6 +69,7 @@ public class PostResponseDto {
         return new PostResponseDto(
                 post.getId(),
                 post.getUsername(),
+                post.getProfileImage(),
                 post.getNickname(),
                 post.getTitle(),
                 post.getContent(),

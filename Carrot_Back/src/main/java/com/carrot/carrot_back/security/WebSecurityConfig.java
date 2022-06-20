@@ -140,7 +140,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,/api/signup");
         skipPathList.add("POST,/user/signup");
         skipPathList.add("POST,/api/signup");
-        skipPathList.add("POST,/api/signup/checkid");
+        skipPathList.add("POST,/user/signup/checkid");
+        skipPathList.add("POST,/user/signup/checknickname");
         skipPathList.add("POST,/api/login");
         skipPathList.add("POST,/user/login");
         //포스트,댓글 불러오는것 허락

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class PostService {
     public ResponseEntity createPost(PostRequestDto requestDto, UserDetailsImpl userDetails) {
         Post post = Post.builder()
                 .username(userDetails.getUsername())
+                .profileImage(userDetails.getUser().getProfileImage())
                 .nickname(userDetails.getUser().getNickname())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent().replace("\r\n", "<br>"))
@@ -44,22 +46,13 @@ public class PostService {
         return new ResponseEntity(post, HttpStatus.OK);
     }
 
-
-//    //지역별로 게시물 조회
-//    public List<PostResponseDto> getPostsByLocation(String location) {
-//        List<Post> posts = postRepository.findAllByLocation(location);
-//        List<PostResponseDto> postResponseDtos = new ArrayList<>();
-//        makeList(posts);
-//        return postResponseDtos;
-//    }
-
     //모든 게시물 조회
     public List<PostResponseDto> getAllPosts() {
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         return makeList(posts);
     }
 
-    //중복 검색 방지용 https://howtodoinjava.com/java8/java-stream-distinct-examples/
+    //중복 검색 방지용 출처: https://howtodoinjava.com/java8/java-stream-distinct-examples/
     public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
@@ -70,10 +63,12 @@ public class PostService {
         List<Post> postsByTitle = postRepository.findByTitleContaining(keyword);
         List<Post> postsByLocation = postRepository.findByLocationContaining(keyword);
         List<Post> postsByContent = postRepository.findByContentContaining(keyword);
+        List<Post> postsByNickname = postRepository.findByNicknameContaining(keyword);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
         postResponseDtos.addAll(makeList(postsByTitle));
         postResponseDtos.addAll(makeList(postsByLocation));
         postResponseDtos.addAll(makeList(postsByContent));
+        postResponseDtos.addAll(makeList(postsByNickname));
 //        if (postResponseDtos.isEmpty()) {
 //            return getAllPosts();
 //        }
@@ -91,11 +86,17 @@ public class PostService {
         throw new IllegalArgumentException("작성한 게시글이 없습니다.");
     }
 
-    //닉네임으로 게시글 검색
-    public List<PostResponseDto> getPostsByNickname(String nickname) {
-        List<Post> posts = postRepository.findByNickname(nickname);
-        return makeList(posts);
-    }
+//    //닉네임으로 게시글 검색
+//    public List<PostResponseDto> getPostsByNickname(String nickname) {
+//        List<Post> posts = postRepository.findByNickname(nickname);
+//        return makeList(posts);
+//    }
+//
+//    //지역구로 게시글 검색
+//    public List<PostResponseDto> getPostsByLocation(String location ) {
+//        List<Post> posts = postRepository.findByLocation(location);
+//        return makeList(posts);
+//    }
 
     //for문 돌리는 함수
     public List<PostResponseDto> makeList(List<Post> postList) {
@@ -116,6 +117,7 @@ public class PostService {
     }
 
     //게시물 수정
+    @Transactional
     public ResponseEntity update(Long id, String username, PostRequestDto requestDto) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException()
@@ -123,9 +125,9 @@ public class PostService {
         if (post.getUsername().equals(username)) {
             post.update(requestDto, id);
             postRepository.save(post);
-            return new ResponseEntity(post, HttpStatus.OK);
+            return new ResponseEntity(PostResponseDto.fromPost(post), HttpStatus.OK);
         } else {
-            return new ResponseEntity(HttpStatus.valueOf(403));
+            return new ResponseEntity("수정 불가능한 게시글입니다.", HttpStatus.UNAUTHORIZED); //401: 해당 요청에 대한 권한이 없는 상태
         }
     }
 
@@ -138,7 +140,7 @@ public class PostService {
             postRepository.delete(post);
             return new ResponseEntity("삭제 완료", HttpStatus.OK);
         } else {
-            return new ResponseEntity("삭제 불가능한 게시글입니다.", HttpStatus.valueOf(403));
+            return new ResponseEntity("삭제 불가능한 게시글입니다.", HttpStatus.UNAUTHORIZED); //401: 해당 요청에 대한 권한이 없는 상태
         }
     }
 

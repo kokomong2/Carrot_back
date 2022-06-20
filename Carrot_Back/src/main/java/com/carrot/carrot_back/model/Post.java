@@ -27,6 +27,9 @@ public class Post extends Timestamped{
     private String username;
 
     @Column
+    private String profileImage;
+
+    @Column
     private String nickname;
 
     @Column
@@ -47,8 +50,9 @@ public class Post extends Timestamped{
 
 
     @Builder
-    public Post(String username, String nickname, String title, String content, int price, String location, List<ImageUrl> imageUrls) {
+    public Post(String username, String profileImage,  String nickname, String title, String content, int price, String location, List<ImageUrl> imageUrls) {
         this.username = username;
+        this.profileImage = profileImage;
         this.nickname = nickname;
         this.title = title;
         this.content = content;
@@ -59,6 +63,7 @@ public class Post extends Timestamped{
 
     public Post(PostRequestDto requestDto, UserDetailsImpl userDetails) {
         this.username = userDetails.getUsername();
+        this.profileImage = userDetails.getUser().getProfileImage();
         this.nickname = userDetails.getUser().getNickname();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();

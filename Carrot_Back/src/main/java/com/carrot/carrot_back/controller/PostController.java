@@ -24,16 +24,6 @@ public class PostController {
         return ResponseEntity.ok().body(postService.createPost(requestDto, userDetails));
     }
 
-//    // location으로 찾기
-//    @GetMapping("/api/posts")
-//    public ResponseEntity<List<PostResponseDto>> readPosts(@RequestParam(required = false) String location) {
-//        if (location != null) {
-//            return ResponseEntity.ok().body(postService.getPostsByLocation(location));
-//        } else {
-//            return ResponseEntity.ok().body(postService.getAllPosts());
-//        }
-//    }
-
     //전체 게시글 조회
     @GetMapping("/api/posts")
     public ResponseEntity<List<PostResponseDto>> readPosts() {
@@ -55,11 +45,27 @@ public class PostController {
         return ResponseEntity.ok().body(postService.getMyPosts(userDetails.getUsername()));
     }
 
-    //닉네임으로 게시글 조회
-    @GetMapping("/api/posts/{nickname}")
-    public ResponseEntity getPost(@PathVariable String nickname) {
-        return ResponseEntity.ok().body(postService.getPostsByNickname(nickname));
-    }
+//    // location으로 찾기
+//    @GetMapping("/api/posts")
+//    public ResponseEntity<List<PostResponseDto>> readPosts(@RequestParam(required = false) String location) {
+//        if (location != null) {
+//            return ResponseEntity.ok().body(postService.getPostsByLocation(location));
+//        } else {
+//            return ResponseEntity.ok().body(postService.getAllPosts());
+//        }
+//    }
+//
+//    //닉네임으로 게시글 조회
+//    @GetMapping("/api/posts/{nickname}")
+//    public ResponseEntity getPostByNickname(@PathVariable String nickname) {
+//        return ResponseEntity.ok().body(postService.getPostsByNickname(nickname));
+//    }
+//
+//    //지역구로 게시글 조회
+//    @GetMapping("/api/posts/{location}")
+//    public ResponseEntity getPostByLocation(@PathVariable String location) {
+//        return ResponseEntity.ok().body(postService.getPostsByLocation(location));
+//    }
 
     //해당 게시물 상세 페이지
     @GetMapping("/api/post/{id}")

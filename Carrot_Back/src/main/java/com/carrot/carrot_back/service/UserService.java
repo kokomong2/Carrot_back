@@ -4,8 +4,12 @@ import com.carrot.carrot_back.dto.SignupRequestDto;
 import com.carrot.carrot_back.model.User;
 import com.carrot.carrot_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
@@ -38,13 +42,21 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean checkId(SignupRequestDto requestDto){
-        String username = requestDto.getUsername();
-        return (!userRepository.findByUsername(username).isPresent());
+    public ResponseEntity checkId(String username){
+
+        if(!userRepository.findByUsername(username).isPresent()){
+            return new ResponseEntity("사용가능한 아이디입니다.", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("중복된 아이디입니다", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
-    public boolean checkNickname(SignupRequestDto requestDto){
-        String nickname = requestDto.getNickname();
-        return (!userRepository.findByNickname(nickname).isPresent());
+    public ResponseEntity checkNickname(String nickname){
+        if(!userRepository.findByUsername(nickname).isPresent()){
+            return new ResponseEntity("사용가능한 닉네임입니다.", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("중복된 닉네임입니다", HttpStatus.BAD_REQUEST);
+        }
     }
 }

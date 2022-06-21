@@ -26,15 +26,15 @@ UserController {
         }
     }
 
-    @PostMapping("/user/signup/checkid")
-    public boolean checkid(@RequestBody SignupRequestDto requestDto){
+    @GetMapping("/user/signup/checkid/{username}")
+    public ResponseEntity checkid(@PathVariable String username){
 
-        return userService.checkId(requestDto);
+        return userService.checkId(username);
     }
 
-    @PostMapping("/user/signup/checknickname")
-    public boolean checkNickname(@RequestBody SignupRequestDto requestDto){
+    @GetMapping("/user/signup/checknickname/{nickname}")
+    public ResponseEntity checkNickname(@PathVariable String nickname){
 
-        return userService.checkNickname(requestDto);
+        return userService.checkNickname(nickname);
     }
 }

@@ -1,6 +1,6 @@
 package com.carrot.carrot_back.controller;
 
-import com.carrot.carrot_back.dto.SignupRequestDto;
+import com.carrot.carrot_back.dto.requestDto.SignupRequestDto;
 import com.carrot.carrot_back.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

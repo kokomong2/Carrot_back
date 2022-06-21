@@ -1,6 +1,6 @@
 package com.carrot.carrot_back.service;
 
-import com.carrot.carrot_back.dto.SignupRequestDto;
+import com.carrot.carrot_back.dto.requestDto.SignupRequestDto;
 import com.carrot.carrot_back.model.User;
 import com.carrot.carrot_back.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

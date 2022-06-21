@@ -2,10 +2,10 @@ package com.carrot.carrot_back.dto.responseDto;
 
 import com.carrot.carrot_back.model.ImageUrl;
 import com.carrot.carrot_back.model.Post;
-import com.carrot.carrot_back.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 import java.text.SimpleDateFormat;
@@ -78,5 +78,14 @@ public class PostResponseDto {
                 post.getImageUrls(),
                 calculatedTime(post)
         );
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    public static class UserResponseDto {
+        private String username;
+        private String nickname;
+
     }
 }

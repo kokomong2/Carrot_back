@@ -1,12 +1,8 @@
 package com.carrot.carrot_back.controller;
 
-import com.carrot.carrot_back.dto.requestDto.PostRequestDto;
-import com.carrot.carrot_back.dto.responseDto.PostResponseDto;
-import com.carrot.carrot_back.model.Post;
 import io.swagger.annotations.ApiOperation;
 import com.carrot.carrot_back.service.AwsS3Service;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

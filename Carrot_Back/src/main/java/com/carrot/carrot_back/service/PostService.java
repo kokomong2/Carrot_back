@@ -138,24 +138,33 @@ public class PostService {
     }
 
     //게시물 삭제
-    public ResponseEntity delete(Long id, String username, String filename) {
+    public ResponseEntity delete(Long id, String username) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException()
         );
         if (post.getUsername().equals(username)) {
+            deleteImageUrls(post);
             postRepository.delete(post);
-            awsS3Service.deleteFile(filename);
             return new ResponseEntity("삭제 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity("삭제 불가능한 게시글입니다.", HttpStatus.UNAUTHORIZED); //401: 해당 요청에 대한 권한이 없는 상태
         }
     }
 
+    //게시물 삭제 시 S3의 이미지 파일도 삭제
+    private void deleteImageUrls(Post post) {
+        List<ImageUrl> imageUrlList = post.getImageUrls();
+        if (imageUrlList != null) {
+            imageUrlList.forEach(imageUrl-> {
+                // image.url 에서 filename 뽑기
+                String fileName = imageUrl.getImageUrl().split("/")[3];
+                awsS3Service.deleteFile(fileName);});
+        }
+    }
 
     //imageUrl들을 imageUrls리스트로 만들어주기
     private List<ImageUrl> saveImageUrls(List<String> imageUrls, Post post) {
         List<ImageUrl> imageUrlList = new ArrayList<>();
-
         imageUrls.forEach(imageUrl -> {
             imageUrlList.add(ImageUrl.builder()
                     .imageUrl(imageUrl)
@@ -164,5 +173,4 @@ public class PostService {
         });
         return imageUrlRepository.saveAll(imageUrlList);
     }
-
 }

@@ -81,8 +81,8 @@ public class PostController {
 
     //게시글 삭제
     @DeleteMapping("/api/post/{id}")
-    public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String fileName) {
-        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername(), fileName));
+    public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername()));
     }
 
 

@@ -25,4 +25,16 @@ UserController {
             return new ResponseEntity("회원가입 실패", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/user/signup/checkid")
+    public boolean checkid(@RequestBody SignupRequestDto requestDto){
+
+        return userService.checkId(requestDto);
+    }
+
+    @PostMapping("/user/signup/checknickname")
+    public boolean checkNickname(@RequestBody SignupRequestDto requestDto){
+
+        return userService.checkNickname(requestDto);
+    }
 }

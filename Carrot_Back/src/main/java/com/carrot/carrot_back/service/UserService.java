@@ -42,4 +42,9 @@ public class UserService {
         String username = requestDto.getUsername();
         return (!userRepository.findByUsername(username).isPresent());
     }
+
+    public boolean checkNickname(SignupRequestDto requestDto){
+        String nickname = requestDto.getNickname();
+        return (!userRepository.findByNickname(nickname).isPresent());
+    }
 }

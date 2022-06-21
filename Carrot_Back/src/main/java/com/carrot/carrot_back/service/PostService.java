@@ -12,6 +12,7 @@ import org.springframework.cglib.core.internal.Function;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.transaction.Transactional;
@@ -27,9 +28,14 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final ImageUrlRepository imageUrlRepository;
+    private final AwsS3Service awsS3Service;
 
     //게시물 작성
-    public ResponseEntity createPost(PostRequestDto requestDto, UserDetailsImpl userDetails) {
+    @Transactional
+    public ResponseEntity createPost(PostRequestDto requestDto, List<MultipartFile> files, UserDetailsImpl userDetails) {
+        // file 업로드
+        List<String> imageUrls = awsS3Service.uploadFile(files);
+
         Post post = Post.builder()
                 .username(userDetails.getUsername())
                 .profileImage(userDetails.getUser().getProfileImage())
@@ -41,9 +47,9 @@ public class PostService {
                 .build();
         postRepository.save(post);
 
-        saveImageUrls(requestDto.getImageUrls(), post);
+        saveImageUrls(imageUrls, post);
 
-        return new ResponseEntity(post, HttpStatus.OK);
+        return new ResponseEntity(PostResponseDto.fromPost(post), HttpStatus.OK);
     }
 
     //모든 게시물 조회
@@ -132,17 +138,19 @@ public class PostService {
     }
 
     //게시물 삭제
-    public ResponseEntity delete(Long id, String username) {
+    public ResponseEntity delete(Long id, String username, String filename) {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException()
         );
         if (post.getUsername().equals(username)) {
             postRepository.delete(post);
+            awsS3Service.deleteFile(filename);
             return new ResponseEntity("삭제 완료", HttpStatus.OK);
         } else {
             return new ResponseEntity("삭제 불가능한 게시글입니다.", HttpStatus.UNAUTHORIZED); //401: 해당 요청에 대한 권한이 없는 상태
         }
     }
+
 
     //imageUrl들을 imageUrls리스트로 만들어주기
     private List<ImageUrl> saveImageUrls(List<String> imageUrls, Post post) {
@@ -156,4 +164,5 @@ public class PostService {
         });
         return imageUrlRepository.saveAll(imageUrlList);
     }
+
 }

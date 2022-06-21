@@ -1,4 +1,4 @@
-package com.carrot.carrot_back.dto;
+package com.carrot.carrot_back.dto.requestDto;
 
 import lombok.Getter;
 import lombok.Setter;

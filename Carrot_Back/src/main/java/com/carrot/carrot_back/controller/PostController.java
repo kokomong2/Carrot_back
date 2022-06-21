@@ -2,15 +2,15 @@ package com.carrot.carrot_back.controller;
 
 import com.carrot.carrot_back.dto.requestDto.PostRequestDto;
 import com.carrot.carrot_back.dto.responseDto.PostResponseDto;
-import com.carrot.carrot_back.model.Post;
-import com.carrot.carrot_back.model.User;
 import com.carrot.carrot_back.security.UserDetailsImpl;
 import com.carrot.carrot_back.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,8 +20,8 @@ public class PostController {
 
     //게시글 등록
     @PostMapping("/api/posting")
-    public ResponseEntity createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.createPost(requestDto, userDetails));
+    public ResponseEntity createPost(@RequestPart(name="request_dto") PostRequestDto requestDto, @RequestPart(name="image_files") List<MultipartFile> imageFiles, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(postService.createPost(requestDto, imageFiles, userDetails));
     }
 
     //전체 게시글 조회
@@ -81,7 +81,9 @@ public class PostController {
 
     //게시글 삭제
     @DeleteMapping("/api/post/{id}")
-    public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername()));
+    public ResponseEntity deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String fileName) {
+        return ResponseEntity.ok().body(postService.delete(id, userDetails.getUser().getUsername(), fileName));
     }
+
+
 }

@@ -8,6 +8,7 @@
   * <b>Tool</b>
    <br/><img src="https://img.shields.io/badge/GitHub-purple?style=flat-flat&logo=Github&logoColor=white"/>
 
+ *Backend : Spring boot, java 11
   
 ## 📽 배포
 http://dictionarytest1.s3-website.ap-northeast-2.amazonaws.com/
@@ -43,19 +44,6 @@ http://dictionarytest1.s3-website.ap-northeast-2.amazonaws.com/
 * [UPDATE & DELETE]
    * 본인이 작성한 포스트에만 수정/삭제 버튼 활성화
    * 포스트 수정 및 삭제 기능 구현
-
-### 댓글 CRUD
-* [CREATE]
-   * 댓글 작성기능
-   * 작성자, 작성시간 등 기록
-
-* [READ]
-   * 작성된 댓글 화면에 로드
-
-* [UPDATE & DELETE]
-   * 본인이 작성한 댓글에만 수정/삭제 버튼 활성화
-   * 댓글 수정 및 삭제 기능 구현
-
 
 ### 프론트 깃
 https://github.com/hh99-Coding-7w/carrot 
